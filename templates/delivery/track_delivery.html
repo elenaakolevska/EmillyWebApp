@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Следење на достава - Butik Emilly{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'products:home' %}">Почетна</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'orders:order_history' %}">Мои Нарачки</a></li>
+            <li class="breadcrumb-item active">Следење на достава</li>
+        </ol>
+    </nav>
+    
+    <h1 class="mb-4">Следење на достава</h1>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Delivery Status Timeline -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="mb-4">Статус на нарачка: {{ order.get_order_number }}</h5>
+                    
+                    <!-- Status Progress -->
+                    <div class="mb-5">
+                        <div class="d-flex justify-content-between mb-2">
+                            <div class="text-center" style="flex: 1;">
+                                <div class="mb-2">
+                                    <i class="bi bi-check-circle-fill {% if delivery.status == 'created' or delivery.status == 'packed' or delivery.status == 'shipped' or delivery.status == 'delivered' %}text-success{% else %}text-muted{% endif %}" style="font-size: 2rem;"></i>
+                                </div>
+                                <p class="small mb-0">Креирана</p>
+                            </div>
+                            <div class="text-center" style="flex: 1;">
+                                <div class="mb-2">
+                                    <i class="bi bi-box-seam-fill {% if delivery.status == 'packed' or delivery.status == 'shipped' or delivery.status == 'delivered' %}text-success{% else %}text-muted{% endif %}" style="font-size: 2rem;"></i>
+                                </div>
+                                <p class="small mb-0">Спакувана</p>
+                            </div>
+                            <div class="text-center" style="flex: 1;">
+                                <div class="mb-2">
+                                    <i class="bi bi-truck {% if delivery.status == 'shipped' or delivery.status == 'in_transit' or delivery.status == 'out_for_delivery' or delivery.status == 'delivered' %}text-success{% else %}text-muted{% endif %}" style="font-size: 2rem;"></i>
+                                </div>
+                                <p class="small mb-0">Испратена</p>
+                            </div>
+                            <div class="text-center" style="flex: 1;">
+                                <div class="mb-2">
+                                    <i class="bi bi-house-check-fill {% if delivery.status == 'delivered' %}text-success{% else %}text-muted{% endif %}" style="font-size: 2rem;"></i>
+                                </div>
+                                <p class="small mb-0">Доставена</p>
+                            </div>
+                        </div>
+                        <div class="progress" style="height: 5px;">
+                            {% if delivery.status == 'created' %}
+                            <div class="progress-bar bg-success" style="width: 25%"></div>
+                            {% elif delivery.status == 'packed' %}
+                            <div class="progress-bar bg-success" style="width: 50%"></div>
+                            {% elif delivery.status == 'shipped' or delivery.status == 'in_transit' or delivery.status == 'out_for_delivery' %}
+                            <div class="progress-bar bg-success" style="width: 75%"></div>
+                            {% elif delivery.status == 'delivered' %}
+                            <div class="progress-bar bg-success" style="width: 100%"></div>
+                            {% else %}
+                            <div class="progress-bar bg-success" style="width: 10%"></div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Current Status -->
+                    <div class="alert alert-info mb-4">
+                        <h6 class="mb-2">
+                            <i class="bi bi-info-circle"></i> Тековен статус: <strong>{{ delivery.get_status_display }}</strong>
+                        </h6>
+                        {% if delivery.status == 'created' %}
+                        <p class="mb-0 small">Вашата нарачка е креирана и се подготвува за испорака.</p>
+                        {% elif delivery.status == 'packed' %}
+                        <p class="mb-0 small">Вашата нарачка е спакувана и подготвена за испорака.</p>
+                        {% elif delivery.status == 'shipped' %}
+                        <p class="mb-0 small">Вашата нарачка е предадена на курирската служба и е во транспорт.</p>
+                        {% elif delivery.status == 'delivered' %}
+                        <p class="mb-0 small">Вашата нарачка е успешно доставена!</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Status History -->
+                    <h6 class="mb-3">Историја на статуси</h6>
+                    {% for history in status_history %}
+                    <div class="d-flex mb-3 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+                        <div class="me-3">
+                            <i class="bi bi-clock-history text-muted"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <p class="mb-1"><strong>{{ history.get_status_display }}</strong></p>
+                            {% if history.notes %}
+                            <p class="text-muted small mb-1">{{ history.notes }}</p>
+                            {% endif %}
+                            <p class="text-muted small mb-0">{{ history.created_at|date:"d.m.Y H:i" }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <!-- Delivery Details -->
+            <div class="card mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Детали за достава</h5>
+                </div>
+                <div class="card-body">
+                    {% if delivery.tracking_number %}
+                    <p class="mb-2"><strong>Број за следење:</strong></p>
+                    <p class="mb-3">{{ delivery.tracking_number }}</p>
+                    {% endif %}
+                    
+                    {% if delivery.courier_name %}
+                    <p class="mb-2"><strong>Курирска служба:</strong></p>
+                    <p class="mb-3">{{ delivery.courier_name }}</p>
+                    {% endif %}
+                    
+                    <p class="mb-2"><strong>Адреса за достава:</strong></p>
+                    <p class="mb-1">{{ order.first_name }} {{ order.last_name }}</p>
+                    <p class="mb-1">{{ order.street_address }}</p>
+                    <p class="mb-1">{{ order.city }}</p>
+                    <p class="mb-3">{{ order.phone }}</p>
+                    
+                    {% if delivery.delivery_option %}
+                    <p class="mb-2"><strong>Опција за достава:</strong></p>
+                    <p class="mb-0">{{ delivery.delivery_option.name_mk }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Order Summary -->
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Нарачка</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2"><strong>Број на нарачка:</strong></p>
+                    <p class="mb-3">{{ order.get_order_number }}</p>
+                    
+                    <p class="mb-2"><strong>Датум на нарачка:</strong></p>
+                    <p class="mb-3">{{ order.created_at|date:"d.m.Y" }}</p>
+                    
+                    <p class="mb-2"><strong>Вкупно:</strong></p>
+                    <p class="product-price mb-3">{{ order.total }} ден.</p>
+                    
+                    <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-outline-primary btn-sm w-100">
+                        Види целосна нарачка
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

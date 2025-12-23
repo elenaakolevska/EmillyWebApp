@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Производи - Butik Emilly{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-light p-3 rounded">
+            <li class="breadcrumb-item"><a href="{% url 'products:home' %}" class="text-decoration-none">Почетна</a></li>
+            <li class="breadcrumb-item active">Производи</li>
+        </ol>
+    </nav>
+    
+    <h1 class="mb-4">Нашите Производи</h1>
+    
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" action="">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Категорија</label>
+                        <select name="category" class="form-select">
+                            <option value="">Сите</option>
+                            {% for category in categories %}
+                            <option value="{{ category.slug }}" {% if current_category == category.slug %}selected{% endif %}>
+                                {{ category.name_mk }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Големина</label>
+                        <select name="size" class="form-select">
+                            <option value="">Сите</option>
+                            {% for size in all_sizes %}
+                            <option value="{{ size }}" {% if current_size == size %}selected{% endif %}>{{ size }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="submit" class="btn btn-primary w-100">Пребарај</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Products Grid -->
+    <div class="row g-4">
+        {% for product in page_obj %}
+        <div class="col-md-3">
+            <div class="card product-card h-100">
+                <img src="{{ product.get_image_url }}" class="card-img-top product-image" alt="{{ product.name }}">
+                <div class="card-body d-flex flex-column">
+                        <h6 class="card-title">{{ product.name }}</h6>
+                        <p class="text-muted small mb-1">{{ product.category.name_mk }}</p>
+                        <p class="text-muted small mb-2">Големина: {{ product.size }}</p>
+                        <p class="product-price mb-3">{{ product.price }} ден.</p>
+                    <div class="d-flex gap-2 mt-auto">
+                        <a href="{% url 'products:product_detail' product.pk %}" class="btn btn-outline-primary btn-sm flex-grow-1">Види</a>
+                        <form method="post" action="{% url 'cart:add_to_cart' product.pk %}" class="flex-grow-1">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-accent btn-sm w-100">Додади</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <p class="mb-0">Нема пронајдено производи со избраните филтри.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <nav class="mt-5">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?{% if filter_params %}{{ filter_params }}&{% endif %}page={{ page_obj.previous_page_number }}">Претходна</a>
+            </li>
+            {% endif %}
+            
+            {% for num in page_obj.paginator.page_range %}
+            <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                <a class="page-link" href="?{% if filter_params %}{{ filter_params }}&{% endif %}page={{ num }}">{{ num }}</a>
+            </li>
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?{% if filter_params %}{{ filter_params }}&{% endif %}page={{ page_obj.next_page_number }}">Следна</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
+

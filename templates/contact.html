@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Контакт - Butik Emilly{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <h1 class="text-center mb-5">Контакт</h1>
+            
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h4 class="mb-4">
+                                <i class="bi bi-geo-alt-fill text-danger"></i> Адреса
+                            </h4>
+                            <p class="mb-4">
+                                <strong>Ул. Македонски Просветители</strong><br>
+                                Охрид, Македонија
+                            </p>
+                            
+                            <h4 class="mb-4">
+                                <i class="bi bi-telephone-fill text-danger"></i> Телефон
+                            </h4>
+                            <p class="mb-4">
+                                <a href="tel:+38975355727" class="text-decoration-none text-dark">
+                                    <strong>+389 75 355 727</strong>
+                                </a>
+                            </p>
+                            
+                            <h4 class="mb-4">
+                                <i class="bi bi-envelope-fill text-danger"></i> Емаил
+                            </h4>
+                            <p class="mb-4">
+                                <a href="mailto:info@butikemilly.mk" class="text-decoration-none text-dark">
+                                    <strong>info@butikemilly.mk</strong>
+                                </a>
+                            </p>
+                            
+                            <h4 class="mb-4">
+                                <i class="bi bi-clock-fill text-danger"></i> Работно време
+                            </h4>
+                            <table class="table table-borderless">
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Понеделник - Сабота:</strong></td>
+                                        <td>09:30 - 21:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Недела:</strong></td>
+                                        <td>Затворено</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Државни празници:</strong></td>
+                                        <td>Затворено</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h4 class="mb-4">Испратете порака</h4>
+                            <form>
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Име и Презиме *</label>
+                                    <input type="text" class="form-control" id="name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Емаил *</label>
+                                    <input type="email" class="form-control" id="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label">Телефон</label>
+                                    <input type="tel" class="form-control" id="phone">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="message" class="form-label">Порака *</label>
+                                    <textarea class="form-control" id="message" rows="5" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-accent w-100">
+                                    <i class="bi bi-send"></i> Испрати Порака
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="card border-0 bg-light">
+                        <div class="card-body p-5 text-center">
+                            <h4 class="mb-4">Следете нè на социјалните мрежи</h4>
+                            <div class="d-flex justify-content-center gap-4 mb-4">
+                                <a href="https://www.facebook.com/EmillyOhrid" target="_blank" class="btn btn-outline-primary btn-lg">
+                                    <i class="bi bi-facebook"></i> Facebook
+                                </a>
+                                <a href="https://www.instagram.com/butik_emilly_ohrid/?hl=en" target="_blank" class="btn btn-outline-danger btn-lg">
+                                    <i class="bi bi-instagram"></i> Instagram
+                                </a>
+                            </div>
+                            <p class="text-muted mb-0">
+                                Следете ги нашите најнови колекции, совети за стил и специјални понуди!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        <h5 class="mb-3"><i class="bi bi-calendar-check"></i> Закажете проба</h5>
+                        <p class="mb-3">
+                            Препорачуваме да закажете термин за проба на венчаница или фустан за да ви обезбедиме целосно внимание и персонализирана услуга.
+                        </p>
+                        <a href="{% url 'reservations:create' %}" class="btn btn-primary">
+                            <i class="bi bi-calendar-plus"></i> Закажи проба
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-5">
+                <div class="col-12">
+                    <h4 class="text-center mb-4">Наша Локација</h4>
+                    <div class="ratio ratio-16x9">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d744.2394821837193!2d20.800232869566967!3d41.10197529871944!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1350e1d4c1c1c1c1%3A0x1c1c1c1c1c1c1c1!2sMakedonski%20Prosvetiteli%2C%20Ohrid%206000!5e0!3m2!1sen!2smk!4v1234567890" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

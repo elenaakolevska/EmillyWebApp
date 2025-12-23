@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section" style="background-image: url('{% static 'images/background.png' %}');">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1 class="display-4 fw-bold mb-3">Пронајдете го вашиот фустан од соништата.</h1>
+        <p class="lead mb-4">Венчаници, свечени фустани и костуми за сите специјални моменти</p>
+        <a href="{% url 'products:product_list' %}" class="btn btn-accent btn-lg">Види уште</a>
+    </div>
+</section>
+
+<!-- Filters Section -->
+<section class="filter-section">
+    <div class="container">
+        <h2 class="text-center mb-4">Истражете ja нашата колекција</h2>
+        <form method="get" action="{% url 'products:product_list' %}">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <select name="category" class="form-select">
+                        <option value="">Повод - Сите</option>
+                        {% for category in categories %}
+                        <option value="{{ category.slug }}">{{ category.name_mk }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select name="size" class="form-select">
+                        <option value="">Големина - Сите</option>
+                        <option value="XS">XS</option>
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                        <option value="XXL">XXL</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" name="search" class="form-control" placeholder="Пребарај по име">
+                </div>
+            </div>
+            <div class="text-center mt-3">
+                <button type="submit" class="btn btn-primary">Пребарај</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- New Collection -->
+{% if new_products %}
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Нова Колекција</h2>
+        <div class="row g-4">
+            {% for product in new_products %}
+            <div class="col-md-4">
+                <div class="card product-card">
+                    <img src="{{ product.get_image_url }}" class="card-img-top product-image" alt="{{ product.name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="text-muted small mb-1">Големина: {{ product.size }}</p>
+                        <p class="product-price mb-3">{{ product.price }} ден.</p>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'products:product_detail' product.pk %}" class="btn btn-outline-primary btn-sm flex-grow-1">Види детали</a>
+                            <form method="post" action="{% url 'cart:add_to_cart' product.pk %}" class="flex-grow-1">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-accent btn-sm w-100">Додади</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Popular Models -->
+{% if popular_products %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-4">Популарни Модели</h2>
+        <div class="row g-4">
+            {% for product in popular_products %}
+            <div class="col-md-4">
+                <div class="card product-card">
+                    <img src="{{ product.get_image_url }}" class="card-img-top product-image" alt="{{ product.name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="text-muted small mb-1">Големина: {{ product.size }}</p>
+                        <p class="product-price mb-3">{{ product.price }} ден.</p>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'products:product_detail' product.pk %}" class="btn btn-outline-primary btn-sm flex-grow-1">Види детали</a>
+                            <form method="post" action="{% url 'cart:add_to_cart' product.pk %}" class="flex-grow-1">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-accent btn-sm w-100">Додади</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="feature-icon">
+                    <i class="bi bi-gem"></i>
+                </div>
+                <h5>Рачна изработка</h5>
+                <p class="text-muted small">Секој фустан е изработен со внимание и грижа за детали</p>
+            </div>
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="feature-icon">
+                    <i class="bi bi-heart"></i>
+                </div>
+                <h5>Лична консултација</h5>
+                <p class="text-muted small">Наш стилист ќе ви помогне да го најдете совршениот фустан</p>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-icon">
+                    <i class="bi bi-award"></i>
+                </div>
+                <h5>Најдобар квалитет</h5>
+                <p class="text-muted small">Користиме најквалитетни материјали и техники</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Instagram Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-4">Следете нè на Instagram</h2>
+        <p class="text-center text-muted mb-4">Најнови трендови и совети за идеален изглед во нашиот Instagram</p>
+        <div class="instagram-grid">
+            <a href="https://www.instagram.com/butik_emilly_ohrid/?hl=en" target="_blank">
+                <img src="{% static 'images/instagram/480626751_1051151777056767_38733546185872959_n.jpg' %}" alt="Instagram" class="img-fluid">
+            </a>
+            <a href="https://www.instagram.com/butik_emilly_ohrid/?hl=en" target="_blank">
+                <img src="{% static 'images/instagram/480961439_1051157417056203_5345642020466491784_n.jpg' %}" alt="Instagram" class="img-fluid">
+            </a>
+            <a href="https://www.instagram.com/butik_emilly_ohrid/?hl=en" target="_blank">
+                <img src="{% static 'images/instagram/h.jpg' %}" alt="Instagram" class="img-fluid">
+            </a>
+            <a href="https://www.instagram.com/butik_emilly_ohrid/?hl=en" target="_blank">
+                <img src="{% static 'images/instagram/kate3.jpg' %}" alt="Instagram" class="img-fluid">
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - Butik Emilly{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-light p-3 rounded">
+            <li class="breadcrumb-item"><a href="{% url 'products:home' %}" class="text-decoration-none">Почетна</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'products:product_list' %}" class="text-decoration-none">Производи</a></li>
+            <li class="breadcrumb-item active">{{ product.name }}</li>
+        </ol>
+    </nav>
+    
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <img src="{{ product.get_image_url }}" class="img-fluid rounded shadow" alt="{{ product.name }}">
+        </div>
+        <div class="col-md-6">
+            <h1 class="mb-3">{{ product.name }}</h1>
+            <p class="text-muted mb-3">{{ product.category.name_mk }}</p>
+            
+            <div class="mb-4">
+                <h3 class="product-price">{{ product.price }} ден.</h3>
+            </div>
+            
+            <div class="mb-3">
+                <strong>Големина:</strong> <span class="badge bg-secondary">{{ product.size }}</span>
+            </div>
+            <div class="mb-4">
+                <strong>Достапност:</strong>
+                {% if product.availability %}
+                <span class="badge bg-success">Достапно</span>
+                {% else %}
+                <span class="badge bg-danger">Не е достапно</span>
+                {% endif %}
+            </div>
+            
+            {% if product.description %}
+            <div class="mb-4">
+                <h5>Опис</h5>
+                <p>{{ product.description }}</p>
+            </div>
+            {% endif %}
+            
+            {% if product.availability %}
+            <form method="post" action="{% url 'cart:add_to_cart' product.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-accent btn-lg mb-3 w-100">
+                    <i class="bi bi-cart-plus"></i> Додади во кошничка
+                </button>
+            </form>
+            {% endif %}
+            
+            <a href="{% url 'reservations:create' %}?product={{ product.pk }}" class="btn btn-outline-primary w-100">
+                <i class="bi bi-calendar-check"></i> Закажи проба
+            </a>
+        </div>
+    </div>
+    
+    <!-- Related Products -->
+    {% if related_products %}
+    <div class="mt-5">
+        <h3 class="mb-4">Слични Производи</h3>
+        <div class="row g-4">
+            {% for related in related_products %}
+            <div class="col-md-3">
+                <div class="card product-card h-100">
+                    <img src="{{ related.get_image_url }}" class="card-img-top product-image" alt="{{ related.name }}">
+                    <div class="card-body">
+                        <h6 class="card-title">{{ related.name }}</h6>
+                        <p class="product-price mb-3">{{ related.price }} ден.</p>
+                        <a href="{% url 'products:product_detail' related.pk %}" class="btn btn-outline-primary btn-sm w-100">Види детали</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+

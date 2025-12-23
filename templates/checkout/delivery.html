@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Достава - Butik Emilly{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Checkout Steps -->
+    <div class="checkout-steps mb-5">
+        <div class="checkout-step">
+            <div class="step-number">1</div>
+            <span>Кошничка</span>
+        </div>
+        <div class="checkout-step active">
+            <div class="step-number">2</div>
+            <span>Достава</span>
+        </div>
+        <div class="checkout-step">
+            <div class="step-number">3</div>
+            <span>Плаќање</span>
+        </div>
+        <div class="checkout-step">
+            <div class="step-number">4</div>
+            <span>Потврда</span>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="mb-4">Податоци за достава</h4>
+                    
+                    <form method="post" action="" id="checkoutForm">
+                        {% csrf_token %}
+                        
+                        <!-- Contact Information (Always Required) -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Име и Презиме</label>
+                                <input type="text" name="first_name" class="form-control" placeholder="Внесете целосно име" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Презиме</label>
+                                <input type="text" name="last_name" class="form-control" placeholder="Внесете презиме" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Телефонски број</label>
+                            <input type="tel" name="phone" class="form-control" placeholder="Внесете телефонски број" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Емаил (опционално)</label>
+                            <input type="email" name="email" class="form-control" placeholder="Внесете емаил адреса">
+                        </div>
+                        
+                        <!-- Delivery Address (Only for delivery options) -->
+                        <div id="deliveryAddressSection">
+                            <h5 class="mb-3">Адреса за достава</h5>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Улица и број</label>
+                                <input type="text" name="street_address" id="street_address" class="form-control" placeholder="Внесете улица и број на куќа/стан/деловен објект">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Град</label>
+                                <select name="city" id="city" class="form-select">
+                                    <option value="">Одберете град</option>
+                                    <option value="Скопје">Скопје</option>
+                                    <option value="Битола">Битола</option>
+                                    <option value="Охрид">Охрид</option>
+                                    <option value="Тетово">Тетово</option>
+                                    <option value="Струмица">Струмица</option>
+                                    <option value="Штип">Штип</option>
+                                    <option value="Гостивар">Гостивар</option>
+                                    <option value="Велес">Велес</option>
+                                    <option value="Куманово">Куманово</option>
+                                    <option value="Друго">Друго</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <h5 class="mb-3">Начин на достава</h5>
+                        
+                        <div class="row g-3 mb-4">
+                            {% for option in delivery_options %}
+                            <div class="col-md-4">
+                                <input type="radio" class="btn-check" name="delivery_option" id="delivery{{ option.id }}" value="{{ option.id }}" {% if forloop.first %}checked{% endif %} required>
+                                <label class="delivery-option w-100 text-center" for="delivery{{ option.id }}">
+                                    <div class="mb-2">
+                                        {% if option.price == 0 %}
+                                        <i class="bi bi-geo-alt fs-2"></i>
+                                        {% elif option.estimated_days <= 1 %}
+                                        <i class="bi bi-lightning fs-2"></i>
+                                        {% else %}
+                                        <i class="bi bi-truck fs-2"></i>
+                                        {% endif %}
+                                    </div>
+                                    <h6>{{ option.name_mk }}</h6>
+                                    <p class="small text-muted mb-2">{{ option.description_mk }}</p>
+                                    {% if option.estimated_days > 0 %}
+                                    <p class="mb-2">{{ option.estimated_days }} работни дена</p>
+                                    {% endif %}
+                                    <p class="fw-bold mb-0">
+                                        {% if option.price == 0 %}
+                                        Бесплатно
+                                        {% else %}
+                                        {{ option.price }} ден
+                                        {% endif %}
+                                    </p>
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="alert alert-info" id="pickupNote" style="display: none;">
+                            <i class="bi bi-info-circle"></i> Ќе ја подигнете нарачката директно во салон. Адреса за достава не е потребна.
+                        </div>
+                        
+                        <p class="text-muted small mb-4">
+                            <i class="bi bi-calendar-heart"></i> За проба на венчаница, ве молиме закажете термин во салон.
+                        </p>
+                        
+                        <button type="submit" class="btn btn-accent btn-lg w-100">Продолжи кон плаќање</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-5">
+            <div class="cart-summary">
+                <h5 class="mb-3">Резиме на нарачка</h5>
+                
+                {% for item in cart.items.all %}
+                <div class="d-flex mb-3">
+                    <img src="{{ item.product.get_image_url }}" class="rounded me-3" style="width: 60px; height: 80px; object-fit: cover;" alt="{{ item.product.name }}">
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1">{{ item.product.name }}</h6>
+                        <p class="small text-muted mb-0">Количина: {{ item.quantity }}</p>
+                        {% if item.discount_percentage > 0 %}
+                        <p class="small mb-0">
+                            <span class="text-decoration-line-through text-muted">{{ item.product.price|floatformat:0 }} ден.</span>
+                            <span class="badge bg-success ms-1">-{{ item.discount_percentage|floatformat:0 }}%</span>
+                        </p>
+                        <p class="small fw-bold mb-0 text-danger">{{ item.get_subtotal|floatformat:0 }} ден.</p>
+                        {% else %}
+                        <p class="small fw-bold mb-0">{{ item.get_subtotal|floatformat:0 }} ден.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <hr>
+                
+                {% if has_discounts %}
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Оригинална цена:</span>
+                    <span class="text-decoration-line-through text-muted">{{ original_subtotal|floatformat:0 }} ден.</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2 text-success">
+                    <span><i class="bi bi-tag-fill me-1"></i>Попуст:</span>
+                    <span class="fw-bold">-{{ total_discount|floatformat:0 }} ден.</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Меѓузбир (со попуст):</span>
+                    <span>{{ subtotal|floatformat:0 }} ден.</span>
+                </div>
+                {% else %}
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Меѓузбир:</span>
+                    <span>{{ subtotal|floatformat:0 }} ден.</span>
+                </div>
+                {% endif %}
+                
+                <div class="d-flex justify-content-between mb-3">
+                    <span>Достава:</span>
+                    <span id="delivery-cost">-</span>
+                </div>
+                
+                <hr>
+                
+                {% if has_discounts %}
+                <div class="bg-success bg-opacity-10 border border-success rounded p-2 mb-2">
+                    <div class="d-flex align-items-center text-success justify-content-center">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        <span class="small fw-bold">Заштедувате {{ total_discount|floatformat:0 }} ден.!</span>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="d-flex justify-content-between">
+                    <strong>Вкупно:</strong>
+                    <strong class="product-price" id="total">{{ subtotal|floatformat:0 }} ден.</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Get delivery address section and form elements
+const deliveryAddressSection = document.getElementById('deliveryAddressSection');
+const streetAddressInput = document.getElementById('street_address');
+const citySelect = document.getElementById('city');
+const pickupNote = document.getElementById('pickupNote');
+
+// Function to toggle delivery address section
+function toggleDeliveryAddress(isPickup) {
+    if (isPickup) {
+        // Hide delivery address section for pickup
+        deliveryAddressSection.style.display = 'none';
+        // Show pickup note
+        pickupNote.style.display = 'block';
+        // Remove required attribute
+        streetAddressInput.removeAttribute('required');
+        citySelect.removeAttribute('required');
+        // Clear values
+        streetAddressInput.value = '';
+        citySelect.value = '';
+    } else {
+        // Show delivery address section for delivery options
+        deliveryAddressSection.style.display = 'block';
+        // Hide pickup note
+        pickupNote.style.display = 'none';
+        // Add required attribute
+        streetAddressInput.setAttribute('required', 'required');
+        citySelect.setAttribute('required', 'required');
+    }
+}
+
+// Update delivery cost and address requirements dynamically
+document.querySelectorAll('input[name="delivery_option"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        const label = this.nextElementSibling;
+        const priceText = label.querySelector('.fw-bold').textContent;
+        const deliveryCostEl = document.getElementById('delivery-cost');
+        const totalEl = document.getElementById('total');
+        const subtotal = {{ subtotal }};
+        
+        // Check if it's pickup option (free delivery)
+        const isPickup = priceText.includes('Бесплатно');
+        
+        // Toggle delivery address section
+        toggleDeliveryAddress(isPickup);
+        
+        // Update costs
+        if (isPickup) {
+            deliveryCostEl.textContent = '0 ден.';
+            totalEl.textContent = subtotal + ' ден.';
+        } else {
+            const price = parseInt(priceText.replace(/[^0-9]/g, ''));
+            deliveryCostEl.textContent = price + ' ден.';
+            totalEl.textContent = (subtotal + price) + ' ден.';
+        }
+    });
+});
+
+// Trigger change on page load for the checked option
+const checkedOption = document.querySelector('input[name="delivery_option"]:checked');
+if (checkedOption) {
+    checkedOption.dispatchEvent(new Event('change'));
+}
+</script>
+{% endblock %}
+

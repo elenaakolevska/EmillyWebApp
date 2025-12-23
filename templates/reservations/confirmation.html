@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Потврда на Резервација - Butik Emilly{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="text-center mb-5">
+                <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+                <h2 class="mt-4 mb-3">Резервацијата е успешна!</h2>
+                <p class="lead text-muted">Вашата резервација за проба е закажана.</p>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="mb-4">Детали на резервација</h5>
+                    
+                    <p class="mb-2"><strong>Име:</strong></p>
+                    <p class="mb-3">{{ reservation.first_name }} {{ reservation.last_name }}</p>
+                    
+                    <p class="mb-2"><strong>Телефон:</strong></p>
+                    <p class="mb-3">{{ reservation.phone }}</p>
+                    
+                    {% if reservation.email %}
+                    <p class="mb-2"><strong>Емаил:</strong></p>
+                    <p class="mb-3">{{ reservation.email }}</p>
+                    {% endif %}
+                    
+                    {% if reservation.product %}
+                    <p class="mb-2"><strong>Производ:</strong></p>
+                    <p class="mb-3">{{ reservation.product.name }}</p>
+                    {% endif %}
+                    
+                    <p class="mb-2"><strong>Датум и време:</strong></p>
+                    <p class="mb-3">{{ reservation.reservation_date|date:"d.m.Y" }} во {{ reservation.reservation_time|time:"H:i" }}</p>
+                    
+                    <p class="mb-2"><strong>Статус:</strong></p>
+                    <p class="mb-3"><span class="badge bg-warning">{{ reservation.get_status_display }}</span></p>
+                    
+                    {% if reservation.notes %}
+                    <p class="mb-2"><strong>Забелешки:</strong></p>
+                    <p class="mb-3">{{ reservation.notes }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="alert alert-info mt-4">
+                <h6><i class="bi bi-info-circle"></i> Важно</h6>
+                <p class="mb-0 small">Ве молиме дојдете 10 минути пред закажаниот термин. За промени или откажување, контактирајте нè на +389 75 355 727.</p>
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="{% url 'products:home' %}" class="btn btn-primary">Назад кон почетна</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

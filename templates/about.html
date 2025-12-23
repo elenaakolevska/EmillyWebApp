@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}За Нас - Butik Emilly{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <h1 class="text-center mb-5">За Нас</h1>
+            
+            <div class="row align-items-center mb-5">
+                <div class="col-md-6 mb-4 mb-md-0">
+                    <img src="{% static 'images/instagram/480961439_1051157417056203_5345642020466491784_n.jpg' %}" alt="Butik Emilly" class="img-fluid rounded shadow">
+                </div>
+                <div class="col-md-6">
+                    <h3 class="mb-4">Нашата Приказна</h3>
+                    <p class="lead">
+                        Butik Emilly е моден бутик со седиште во Охрид, специјализиран за венчаници, свечени фустани, машки костуми и внимателно одбрани модни додатоци.
+                    </p>
+                    <p>
+                        Нашата приказна започна од љубовта кон елеганцијата, деталите и желбата секој клиент да се почувствува посебно во своите најважни моменти.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="card border-0 bg-light">
+                        <div class="card-body p-5">
+                            <p class="mb-4">
+                                Со години градиме доверба со клиентите од Охрид и пошироко, нудејќи уникатни модели, персонализиран пристап и професионални совети при изборот на венчаница, фустан или костум. Голем дел од нашите производи се рачно изработени или внимателно селектирани, со фокус на квалитет, удобност и современ дизајн.
+                            </p>
+                            <p class="mb-4">
+                                Butik Emilly постојано се развива и ги следи модните трендови, комбинирајќи традиционална елеганција со модерни линии. Преку нашата веб-продавница сакаме да им овозможиме на клиентите полесен пристап до нашата понуда, можност за онлајн преглед, нарачка и закажување проби, без разлика каде се наоѓаат.
+                            </p>
+                            <p class="mb-0">
+                                Нашата мисија е секој клиент да добие врвно искуство, сигурност и поддршка – од првиот преглед, па сè до финалниот избор. Butik Emilly е место каде стилот, довербата и елеганцијата се среќаваат.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row text-center mb-5">
+                <div class="col-md-4 mb-4">
+                    <div class="p-4">
+                        <i class="bi bi-gem text-danger" style="font-size: 3rem;"></i>
+                        <h5 class="mt-3 mb-3">Рачна изработка</h5>
+                        <p class="text-muted">Секој фустан е изработен со внимание и грижа за детали</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="p-4">
+                        <i class="bi bi-heart text-danger" style="font-size: 3rem;"></i>
+                        <h5 class="mt-3 mb-3">Лична консултација</h5>
+                        <p class="text-muted">Наш стилист ќе ви помогне да го најдете совршениот фустан</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="p-4">
+                        <i class="bi bi-award text-danger" style="font-size: 3rem;"></i>
+                        <h5 class="mt-3 mb-3">Врвен квалитет</h5>
+                        <p class="text-muted">Користиме најквалитетни материјали и техники</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <h3 class="mb-4">Посетете нè</h3>
+                <p class="mb-4">Дојдете во нашиот бутик во Охрид и откријте ја нашата колекција</p>
+                <a href="{% url 'products:contact' %}" class="btn btn-accent btn-lg me-3">Контакт</a>
+                <a href="{% url 'reservations:create' %}" class="btn btn-outline-primary btn-lg">Закажи проба</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

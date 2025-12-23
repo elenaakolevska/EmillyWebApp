@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Плаќање - Butik Emilly{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Checkout Steps -->
+    <div class="checkout-steps mb-5">
+        <div class="checkout-step">
+            <div class="step-number">1</div>
+            <span>Кошничка</span>
+        </div>
+        <div class="checkout-step">
+            <div class="step-number">2</div>
+            <span>Достава</span>
+        </div>
+        <div class="checkout-step active">
+            <div class="step-number">3</div>
+            <span>Плаќање</span>
+        </div>
+        <div class="checkout-step">
+            <div class="step-number">4</div>
+            <span>Потврда</span>
+        </div>
+    </div>
+    
+    <h2 class="text-center mb-4">Плаќање</h2>
+    
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <h5 class="mb-3">Изберете начин на плаќање</h5>
+            
+            <form method="post" action="">
+                {% csrf_token %}
+                
+                <!-- Card Payment -->
+                <div class="payment-option mb-3" onclick="selectPayment('card')">
+                    <input type="radio" class="btn-check" name="payment_method" id="payment_card" value="card" checked>
+                    <label class="w-100" for="payment_card">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-credit-card fs-3 me-3"></i>
+                            <div>
+                                <h6 class="mb-1">Картичка</h6>
+                                <p class="small text-muted mb-0">Visa, MasterCard, American Express</p>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+                
+                <!-- Card Details (shown when card is selected) -->
+                <div id="card-details" class="mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="mb-3">Детали за картичка</h6>
+                            <p class="small text-muted mb-3">Внесете ги податоците од вашата картичка безбедно.</p>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Број на картичка</label>
+                                <input type="text" class="form-control" placeholder="XXXX XXXX XXXX XXXX" maxlength="19">
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-6 mb-3">
+                                    <label class="form-label">Истекува до</label>
+                                    <input type="text" class="form-control" placeholder="ММ/ГГ" maxlength="5">
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <label class="form-label">CVV</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="XXX" maxlength="3">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-question-circle"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Име на сопственик</label>
+                                <input type="text" class="form-control" placeholder="Име и презиме">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bank Transfer -->
+                <div class="payment-option mb-3" onclick="selectPayment('bank_transfer')">
+                    <input type="radio" class="btn-check" name="payment_method" id="payment_bank" value="bank_transfer">
+                    <label class="w-100" for="payment_bank">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-bank fs-3 me-3"></i>
+                            <div>
+                                <h6 class="mb-1">Банкарски трансфер</h6>
+                                <p class="small text-muted mb-0">Директен трансфер од вашата банка</p>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+                
+                <!-- Cash on Delivery -->
+                <div class="payment-option mb-4" onclick="selectPayment('cash_on_delivery')">
+                    <input type="radio" class="btn-check" name="payment_method" id="payment_cash" value="cash_on_delivery">
+                    <label class="w-100" for="payment_cash">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-box-seam fs-3 me-3"></i>
+                            <div>
+                                <h6 class="mb-1">Плаќање при достава</h6>
+                                <p class="small text-muted mb-0">Платете во готово при примање</p>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+                
+                <!-- Security Info -->
+                <div class="alert alert-light text-center mb-4">
+                    <h6 class="mb-2">Безбедност на трансакција</h6>
+                    <p class="small text-muted mb-2">Сите трансакции се заштитени со највисока безбедносни стандарди.</p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" height="30" alt="Visa">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" height="30" alt="MasterCard">
+                    </div>
+                </div>
+                
+                <!-- Order Summary -->
+                <div class="card bg-light mb-4">
+                    <div class="card-body">
+                        <h6 class="mb-3">Резиме на нарачка</h6>
+                        {% if has_discounts %}
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Оригинална цена:</span>
+                            <span class="text-decoration-line-through text-muted">{{ original_subtotal|floatformat:0 }} ден.</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2 text-success">
+                            <span><i class="bi bi-tag-fill me-1"></i>Попуст:</span>
+                            <span class="fw-bold">-{{ total_discount|floatformat:0 }} ден.</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Меѓузбир (со попуст):</span>
+                            <span>{{ subtotal|floatformat:0 }} ден.</span>
+                        </div>
+                        {% else %}
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Меѓузбир:</span>
+                            <span>{{ subtotal|floatformat:0 }} ден.</span>
+                        </div>
+                        {% endif %}
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Достава:</span>
+                            <span>{{ delivery_cost }} ден.</span>
+                        </div>
+                        <hr>
+                        {% if has_discounts %}
+                        <div class="bg-success bg-opacity-10 border border-success rounded p-2 mb-2">
+                            <div class="d-flex align-items-center text-success justify-content-center">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                <span class="small fw-bold">Заштедувате {{ total_discount|floatformat:0 }} ден.!</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="d-flex justify-content-between">
+                            <strong>Вкупно:</strong>
+                            <strong class="product-price">{{ total|floatformat:0 }} ден.</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-accent btn-lg w-100 mb-3">
+                    <i class="bi bi-lock"></i> Заврши нарачка
+                </button>
+                
+                <a href="{% url 'orders:checkout_delivery' %}" class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-arrow-left"></i> Назад
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function selectPayment(method) {
+    // Remove selected class from all options
+    document.querySelectorAll('.payment-option').forEach(opt => {
+        opt.classList.remove('selected');
+    });
+    
+    // Add selected class to clicked option
+    event.currentTarget.classList.add('selected');
+    
+    // Show/hide card details
+    const cardDetails = document.getElementById('card-details');
+    if (method === 'card') {
+        cardDetails.style.display = 'block';
+    } else {
+        cardDetails.style.display = 'none';
+    }
+}
+
+// Initialize: show card details by default
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelector('.payment-option').classList.add('selected');
+});
+</script>
+{% endblock %}
+
