@@ -91,4 +91,4 @@ class Product(models.Model):
     
     def get_image_url(self):
         """Return the URL path for the product image"""
-        return f"/media/{self.image_path}"
+        return f"/static/products/{self.image_path}"
